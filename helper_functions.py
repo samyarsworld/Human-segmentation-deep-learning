@@ -1,3 +1,7 @@
+from PIL import Image
+import random
+import matplotlib.pyplot as plt
+
 def plot_random_transformed_images(image_paths, transform, n=2):
     """ Plots a series of random images from image_paths.
 
