@@ -1,28 +1,27 @@
-import matplotlib.pyplot as plt 
-import numpy as np 
-import torch
+def plot_random_transformed_images(image_paths, transform, n=2):
+    """ Plots a series of random images from image_paths.
 
-def show_image(image,mask,pred_image = None):
-    
-    if pred_image == None:
-        
-        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
-        
-        ax1.set_title('IMAGE')
-        ax1.imshow(image.permute(1,2,0).squeeze(),cmap = 'gray')
-        
-        ax2.set_title('GROUND TRUTH')
-        ax2.imshow(mask.permute(1,2,0).squeeze(),cmap = 'gray')
-        
-    elif pred_image != None :
-        
-        f, (ax1, ax2,ax3) = plt.subplots(1, 3, figsize=(10,5))
-        
-        ax1.set_title('IMAGE')
-        ax1.imshow(image.permute(1,2,0).squeeze(),cmap = 'gray')
-        
-        ax2.set_title('GROUND TRUTH')
-        ax2.imshow(mask.permute(1,2,0).squeeze(),cmap = 'gray')
-        
-        ax3.set_title('MODEL OUTPUT')
-        ax3.imshow(pred_image.permute(1,2,0).squeeze(),cmap = 'gray')
+    Will open n image paths from image_paths, transform them
+    with transform and plot them side by side.
+
+    Args:
+        image_paths (list): List of target image paths. 
+        transform (PyTorch Transforms): Transforms to apply to images.
+        n (int, optional): Number of images to plot. Defaults to 3.
+        seed (int, optional): Random seed for the random generator. Defaults to 42.
+    """
+    random_image_paths = random.sample(image_paths, k=n)
+    for image_path in random_image_paths:
+        with Image.open(image_path) as f:
+            fig, ax = plt.subplots(1, 2)
+            ax[0].imshow(f) 
+            ax[0].set_title(f"Original \nSize: {f.size}")
+            ax[0].axis("off")
+
+            # Transform and plot image
+            # Note: permute() will change the shape of the image to suit matplotlib 
+            # (PyTorch default is [C, H, W] but Matplotlib is [H, W, C])
+            transformed_image = transform(f).permute(1, 2, 0) 
+            ax[1].imshow(transformed_image) 
+            ax[1].set_title(f"Transformed \nSize: {transformed_image.shape}")
+            ax[1].axis("off")
